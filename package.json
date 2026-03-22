@@ -1,0 +1,44 @@
+{
+  "name": "@gridworkjs/query",
+  "version": "1.0.0",
+  "description": "Higher-level spatial queries against any gridwork index",
+  "type": "module",
+  "main": "src/index.js",
+  "types": "./types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./types/index.d.ts",
+      "default": "./src/index.js"
+    }
+  },
+  "scripts": {
+    "test": "node --test",
+    "prepublishOnly": "npx tsc --declaration --allowJs --emitDeclarationOnly --skipLibCheck --target es2020 --module nodenext --moduleResolution nodenext --strict false --esModuleInterop true --outDir ./types src/index.js"
+  },
+  "keywords": [
+    "spatial",
+    "query",
+    "knn",
+    "radius",
+    "raycast",
+    "containment",
+    "spatial-index",
+    "gridwork"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gridworkjs/query.git"
+  },
+  "files": [
+    "src/",
+    "types/"
+  ],
+  "dependencies": {
+    "@gridworkjs/core": "^1.0.0"
+  },
+  "devDependencies": {
+    "@gridworkjs/quadtree": "^1.0.0",
+    "typescript": "^5.9.3"
+  }
+}
