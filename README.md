@@ -38,7 +38,8 @@ Find all entities within 50 units of the player. A tower defense game checking w
 
 ```js
 const inRange = radius(tree, { x: 100, y: 200 }, 50)
-// => [{ item: { id: 'chest', ... }, distance: 7.07 },
+// => [{ item: { id: 'player', ... }, distance: 0 },
+//     { item: { id: 'chest', ... }, distance: 7.07 },
 //     { item: { id: 'enemy-1', ... }, distance: 22.36 }]
 
 for (const { item, distance } of inRange) {
