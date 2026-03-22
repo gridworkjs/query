@@ -57,6 +57,15 @@ describe('ray', () => {
     assert.equal(results[0].item.id, 'near')
   })
 
+  it('returns empty when maxDistance is 0', () => {
+    const tree = makeTree([
+      { id: 'a', geo: rect(5, -1, 7, 1) }
+    ])
+
+    const results = ray(tree, { x: 0, y: 0 }, { x: 1, y: 0 }, { maxDistance: 0 })
+    assert.equal(results.length, 0)
+  })
+
   it('works with diagonal rays', () => {
     const tree = makeTree([
       { id: 'a', geo: rect(4, 4, 6, 6) },

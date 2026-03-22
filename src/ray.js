@@ -24,7 +24,7 @@ export function ray(index, origin, direction, options) {
   const dx = direction.x / len
   const dy = direction.y / len
 
-  const maxDist = (options && options.maxDistance) || Infinity
+  const maxDist = (options && options.maxDistance !== undefined) ? options.maxDistance : Infinity
   if (options && options.maxDistance !== undefined) {
     validateFiniteNumber(options.maxDistance, 'maxDistance')
     if (options.maxDistance < 0) throw new Error('maxDistance must be non-negative')
