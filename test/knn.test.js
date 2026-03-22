@@ -20,7 +20,7 @@ describe('knn', () => {
       { id: 'c', geo: point(10, 0) }
     ])
 
-    const results = knn(tree, accessor, { x: 0, y: 0 }, 2)
+    const results = knn(tree, { x: 0, y: 0 }, 2)
     assert.equal(results.length, 2)
     assert.equal(results[0].item.id, 'a')
     assert.equal(results[0].distance, 1)
@@ -33,7 +33,7 @@ describe('knn', () => {
       { id: 'a', geo: point(3, 4) }
     ])
 
-    const results = knn(tree, accessor, { x: 0, y: 0 }, 1)
+    const results = knn(tree, { x: 0, y: 0 }, 1)
     assert.equal(results[0].distance, 5)
   })
 
@@ -44,7 +44,7 @@ describe('knn', () => {
       { id: 'c', geo: point(10, 0) }
     ])
 
-    const results = knn(tree, accessor, { x: 0, y: 0 }, 10, { maxDistance: 6 })
+    const results = knn(tree, { x: 0, y: 0 }, 10, { maxDistance: 6 })
     assert.equal(results.length, 2)
   })
 
@@ -53,7 +53,7 @@ describe('knn', () => {
       { id: 'a', geo: point(1, 0) }
     ])
 
-    const results = knn(tree, accessor, { x: 0, y: 0 }, 5, { maxDistance: 0 })
+    const results = knn(tree, { x: 0, y: 0 }, 5, { maxDistance: 0 })
     assert.equal(results.length, 0)
   })
 
@@ -65,7 +65,7 @@ describe('knn', () => {
       { id: 'd', geo: point(4, 0), type: 'shop' }
     ])
 
-    const results = knn(tree, accessor, { x: 0, y: 0 }, 2, {
+    const results = knn(tree, { x: 0, y: 0 }, 2, {
       filter: item => item.type === 'food'
     })
     assert.equal(results.length, 2)
@@ -80,7 +80,7 @@ describe('knn', () => {
       { id: 'c', geo: point(10, 0), type: 'food' }
     ])
 
-    const results = knn(tree, accessor, { x: 0, y: 0 }, 5, {
+    const results = knn(tree, { x: 0, y: 0 }, 5, {
       maxDistance: 5,
       filter: item => item.type === 'food'
     })
@@ -90,19 +90,19 @@ describe('knn', () => {
 
   it('returns empty for k=0', () => {
     const tree = makeTree([{ id: 'a', geo: point(0, 0) }])
-    const results = knn(tree, accessor, { x: 0, y: 0 }, 0)
+    const results = knn(tree, { x: 0, y: 0 }, 0)
     assert.equal(results.length, 0)
   })
 
   it('returns empty for k<0', () => {
     const tree = makeTree([{ id: 'a', geo: point(0, 0) }])
-    const results = knn(tree, accessor, { x: 0, y: 0 }, -1)
+    const results = knn(tree, { x: 0, y: 0 }, -1)
     assert.equal(results.length, 0)
   })
 
   it('returns empty for empty index', () => {
     const tree = createQuadtree(accessor)
-    const results = knn(tree, accessor, { x: 0, y: 0 }, 5)
+    const results = knn(tree, { x: 0, y: 0 }, 5)
     assert.equal(results.length, 0)
   })
 
@@ -112,7 +112,7 @@ describe('knn', () => {
       { id: 'b', geo: point(2, 0) }
     ])
 
-    const results = knn(tree, accessor, { x: 0, y: 0 }, 10)
+    const results = knn(tree, { x: 0, y: 0 }, 10)
     assert.equal(results.length, 2)
   })
 
@@ -122,21 +122,21 @@ describe('knn', () => {
       { id: 'b', geo: rect(1, 1, 3, 3) }
     ])
 
-    const results = knn(tree, accessor, { x: 0, y: 0 }, 1)
+    const results = knn(tree, { x: 0, y: 0 }, 1)
     assert.equal(results[0].item.id, 'b')
   })
 
   it('throws on non-spatial-index', () => {
-    assert.throws(() => knn({}, accessor, { x: 0, y: 0 }, 1), /spatial index/)
+    assert.throws(() => knn({}, { x: 0, y: 0 }, 1), /spatial index/)
   })
 
   it('throws on non-integer k', () => {
     const tree = makeTree([])
-    assert.throws(() => knn(tree, accessor, { x: 0, y: 0 }, 1.5), /integer/)
+    assert.throws(() => knn(tree, { x: 0, y: 0 }, 1.5), /integer/)
   })
 
   it('throws on negative maxDistance', () => {
     const tree = makeTree([])
-    assert.throws(() => knn(tree, accessor, { x: 0, y: 0 }, 1, { maxDistance: -1 }), /non-negative/)
+    assert.throws(() => knn(tree, { x: 0, y: 0 }, 1, { maxDistance: -1 }), /non-negative/)
   })
 })

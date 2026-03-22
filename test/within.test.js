@@ -19,7 +19,7 @@ describe('within', () => {
       { id: 'outside', geo: point(15, 15) }
     ])
 
-    const results = within(tree, accessor, rect(0, 0, 10, 10))
+    const results = within(tree, rect(0, 0, 10, 10))
     assert.equal(results.length, 1)
     assert.equal(results[0].id, 'inside')
   })
@@ -30,7 +30,7 @@ describe('within', () => {
       { id: 'full', geo: rect(2, 2, 4, 4) }
     ])
 
-    const results = within(tree, accessor, rect(0, 0, 10, 10))
+    const results = within(tree, rect(0, 0, 10, 10))
     assert.equal(results.length, 1)
     assert.equal(results[0].id, 'full')
   })
@@ -40,7 +40,7 @@ describe('within', () => {
       { id: 'edge', geo: point(10, 10) }
     ])
 
-    const results = within(tree, accessor, rect(0, 0, 10, 10))
+    const results = within(tree, rect(0, 0, 10, 10))
     assert.equal(results.length, 1)
   })
 
@@ -51,7 +51,7 @@ describe('within', () => {
       { id: 'c', geo: point(9, 9) }
     ])
 
-    const results = within(tree, accessor, rect(-100, -100, 100, 100))
+    const results = within(tree, rect(-100, -100, 100, 100))
     assert.equal(results.length, 3)
   })
 
@@ -60,7 +60,7 @@ describe('within', () => {
       { id: 'a', geo: rect(0, 0, 20, 20) }
     ])
 
-    const results = within(tree, accessor, rect(5, 5, 10, 10))
+    const results = within(tree, rect(5, 5, 10, 10))
     assert.equal(results.length, 0)
   })
 
@@ -70,7 +70,7 @@ describe('within', () => {
       { id: 'b', geo: point(50, 50) }
     ])
 
-    const results = within(tree, accessor, circle(5, 5, 10))
+    const results = within(tree, circle(5, 5, 10))
     assert.equal(results.length, 1)
     assert.equal(results[0].id, 'a')
   })
@@ -80,22 +80,17 @@ describe('within', () => {
       { id: 'a', geo: point(5, 5) }
     ])
 
-    const results = within(tree, accessor, { minX: 0, minY: 0, maxX: 10, maxY: 10 })
+    const results = within(tree, { minX: 0, minY: 0, maxX: 10, maxY: 10 })
     assert.equal(results.length, 1)
   })
 
   it('returns empty for empty index', () => {
     const tree = createQuadtree(accessor)
-    const results = within(tree, accessor, rect(0, 0, 100, 100))
+    const results = within(tree, rect(0, 0, 100, 100))
     assert.equal(results.length, 0)
   })
 
   it('throws on non-spatial-index', () => {
-    assert.throws(() => within({}, accessor, rect(0, 0, 10, 10)), /spatial index/)
-  })
-
-  it('throws on invalid accessor', () => {
-    const tree = makeTree([])
-    assert.throws(() => within(tree, null, rect(0, 0, 10, 10)), /accessor/)
+    assert.throws(() => within({}, rect(0, 0, 10, 10)), /spatial index/)
   })
 })

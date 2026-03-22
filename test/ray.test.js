@@ -20,7 +20,7 @@ describe('ray', () => {
       { id: 'c', geo: rect(5, 5, 7, 7) }
     ])
 
-    const results = ray(tree, accessor, { x: 0, y: 0 }, { x: 1, y: 0 })
+    const results = ray(tree, { x: 0, y: 0 }, { x: 1, y: 0 })
     assert.equal(results.length, 2)
     assert.equal(results[0].item.id, 'a')
     assert.equal(results[1].item.id, 'b')
@@ -33,7 +33,7 @@ describe('ray', () => {
       { id: 'mid', geo: rect(10, -1, 12, 1) }
     ])
 
-    const results = ray(tree, accessor, { x: 0, y: 0 }, { x: 1, y: 0 })
+    const results = ray(tree, { x: 0, y: 0 }, { x: 1, y: 0 })
     assert.deepEqual(results.map(r => r.item.id), ['near', 'mid', 'far'])
   })
 
@@ -42,7 +42,7 @@ describe('ray', () => {
       { id: 'a', geo: rect(5, -1, 7, 1) }
     ])
 
-    const results = ray(tree, accessor, { x: 0, y: 0 }, { x: 1, y: 0 })
+    const results = ray(tree, { x: 0, y: 0 }, { x: 1, y: 0 })
     assert.equal(results[0].distance, 5)
   })
 
@@ -52,7 +52,7 @@ describe('ray', () => {
       { id: 'far', geo: rect(20, -1, 22, 1) }
     ])
 
-    const results = ray(tree, accessor, { x: 0, y: 0 }, { x: 1, y: 0 }, { maxDistance: 10 })
+    const results = ray(tree, { x: 0, y: 0 }, { x: 1, y: 0 }, { maxDistance: 10 })
     assert.equal(results.length, 1)
     assert.equal(results[0].item.id, 'near')
   })
@@ -63,7 +63,7 @@ describe('ray', () => {
       { id: 'b', geo: rect(-4, 4, -2, 6) }
     ])
 
-    const results = ray(tree, accessor, { x: 0, y: 0 }, { x: 1, y: 1 })
+    const results = ray(tree, { x: 0, y: 0 }, { x: 1, y: 1 })
     assert.equal(results.length, 1)
     assert.equal(results[0].item.id, 'a')
   })
@@ -74,7 +74,7 @@ describe('ray', () => {
       { id: 'b', geo: rect(5, 5, 7, 7) }
     ])
 
-    const results = ray(tree, accessor, { x: 0, y: 0 }, { x: 0, y: 1 })
+    const results = ray(tree, { x: 0, y: 0 }, { x: 0, y: 1 })
     assert.equal(results.length, 1)
     assert.equal(results[0].item.id, 'a')
   })
@@ -85,7 +85,7 @@ describe('ray', () => {
       { id: 'ahead', geo: rect(5, -1, 7, 1) }
     ])
 
-    const results = ray(tree, accessor, { x: 0, y: 0 }, { x: 1, y: 0 })
+    const results = ray(tree, { x: 0, y: 0 }, { x: 1, y: 0 })
     assert.equal(results.length, 1)
     assert.equal(results[0].item.id, 'ahead')
   })
@@ -95,7 +95,7 @@ describe('ray', () => {
       { id: 'a', geo: rect(-5, -5, 5, 5) }
     ])
 
-    const results = ray(tree, accessor, { x: 0, y: 0 }, { x: 1, y: 0 })
+    const results = ray(tree, { x: 0, y: 0 }, { x: 1, y: 0 })
     assert.equal(results.length, 1)
     assert.equal(results[0].distance, 0)
   })
@@ -105,34 +105,34 @@ describe('ray', () => {
       { id: 'a', geo: rect(5, -1, 7, 1) }
     ])
 
-    const r1 = ray(tree, accessor, { x: 0, y: 0 }, { x: 1, y: 0 })
-    const r2 = ray(tree, accessor, { x: 0, y: 0 }, { x: 100, y: 0 })
+    const r1 = ray(tree, { x: 0, y: 0 }, { x: 1, y: 0 })
+    const r2 = ray(tree, { x: 0, y: 0 }, { x: 100, y: 0 })
     assert.equal(r1[0].distance, r2[0].distance)
   })
 
   it('returns empty for empty index', () => {
     const tree = createQuadtree(accessor)
-    const results = ray(tree, accessor, { x: 0, y: 0 }, { x: 1, y: 0 })
+    const results = ray(tree, { x: 0, y: 0 }, { x: 1, y: 0 })
     assert.equal(results.length, 0)
   })
 
   it('throws on zero direction vector', () => {
     const tree = makeTree([])
-    assert.throws(() => ray(tree, accessor, { x: 0, y: 0 }, { x: 0, y: 0 }), /non-zero/)
+    assert.throws(() => ray(tree, { x: 0, y: 0 }, { x: 0, y: 0 }), /non-zero/)
   })
 
   it('throws on non-spatial-index', () => {
-    assert.throws(() => ray({}, accessor, { x: 0, y: 0 }, { x: 1, y: 0 }), /spatial index/)
+    assert.throws(() => ray({}, { x: 0, y: 0 }, { x: 1, y: 0 }), /spatial index/)
   })
 
   it('throws on NaN origin', () => {
     const tree = makeTree([])
-    assert.throws(() => ray(tree, accessor, { x: NaN, y: 0 }, { x: 1, y: 0 }), /finite/)
+    assert.throws(() => ray(tree, { x: NaN, y: 0 }, { x: 1, y: 0 }), /finite/)
   })
 
   it('throws on negative maxDistance', () => {
     const tree = makeTree([])
-    assert.throws(() => ray(tree, accessor, { x: 0, y: 0 }, { x: 1, y: 0 }, { maxDistance: -1 }), /non-negative/)
+    assert.throws(() => ray(tree, { x: 0, y: 0 }, { x: 1, y: 0 }, { maxDistance: -1 }), /non-negative/)
   })
 
   it('works with point items', () => {
@@ -141,7 +141,7 @@ describe('ray', () => {
       { id: 'b', geo: point(5, 5) }
     ])
 
-    const results = ray(tree, accessor, { x: 0, y: 0 }, { x: 1, y: 0 })
+    const results = ray(tree, { x: 0, y: 0 }, { x: 1, y: 0 })
     assert.equal(results.length, 1)
     assert.equal(results[0].item.id, 'a')
   })
@@ -152,7 +152,7 @@ describe('ray', () => {
       { id: 'b', geo: rect(5, -1, 7, 1) }
     ])
 
-    const results = ray(tree, accessor, { x: 0, y: 0 }, { x: -1, y: 0 })
+    const results = ray(tree, { x: 0, y: 0 }, { x: -1, y: 0 })
     assert.equal(results.length, 1)
     assert.equal(results[0].item.id, 'a')
   })

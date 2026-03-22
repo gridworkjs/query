@@ -18,16 +18,14 @@ Spatial indexes give you `search()` (rectangular intersection) and `nearest()` (
 
 ## Usage
 
-Every query function takes a spatial index and an accessor as its first two arguments. The accessor is the same function you used to construct the index.
+Every query function takes a spatial index as its first argument. The index carries its own accessor, so you never pass it twice.
 
 ```js
 import { radius, knn, ray, within } from '@gridworkjs/query'
 import { createQuadtree } from '@gridworkjs/quadtree'
 import { point, rect, bounds } from '@gridworkjs/core'
 
-const accessor = entity => bounds(entity.position)
-
-const tree = createQuadtree(accessor)
+const tree = createQuadtree(entity => bounds(entity.position))
 tree.insert({ id: 'player', position: point(100, 200), hp: 80 })
 tree.insert({ id: 'enemy-1', position: point(120, 210), hp: 50 })
 tree.insert({ id: 'enemy-2', position: point(400, 100), hp: 90 })
@@ -39,7 +37,7 @@ tree.insert({ id: 'chest', position: point(105, 195), hp: null })
 Find all entities within 50 units of the player. A tower defense game checking which enemies are in range:
 
 ```js
-const inRange = radius(tree, accessor, { x: 100, y: 200 }, 50)
+const inRange = radius(tree, { x: 100, y: 200 }, 50)
 // => [{ item: { id: 'chest', ... }, distance: 7.07 },
 //     { item: { id: 'enemy-1', ... }, distance: 22.36 }]
 
@@ -53,7 +51,7 @@ for (const { item, distance } of inRange) {
 Find the 3 nearest items to a point, but only enemies, and only within 200 units. An AI deciding which target to engage:
 
 ```js
-const targets = knn(tree, accessor, { x: 100, y: 200 }, 3, {
+const targets = knn(tree, { x: 100, y: 200 }, 3, {
   maxDistance: 200,
   filter: item => item.id.startsWith('enemy')
 })
@@ -67,7 +65,7 @@ const primary = targets[0]?.item
 Cast a ray from the player eastward. A bullet, a line of sight check, or a laser:
 
 ```js
-const hits = ray(tree, accessor, { x: 100, y: 200 }, { x: 1, y: 0 })
+const hits = ray(tree, { x: 100, y: 200 }, { x: 1, y: 0 })
 // => [{ item: { id: 'chest', ... }, distance: 5 },
 //     { item: { id: 'enemy-2', ... }, distance: 300 }]
 
@@ -79,49 +77,45 @@ const firstHit = hits[0]?.item
 Find all entities completely contained in a selection rectangle. A strategy game box-selecting units:
 
 ```js
-const selected = within(tree, accessor, rect(90, 190, 130, 220))
+const selected = within(tree, rect(90, 190, 130, 220))
 // => [{ id: 'player', ... }, { id: 'chest', ... }, { id: 'enemy-1', ... }]
 ```
 
 ## API
 
-### `radius(index, accessor, point, r, options?)`
+### `radius(index, point, r, options?)`
 
 Find all items within distance `r` of a point. Returns `{ item, distance }[]` sorted by distance ascending.
 
 - `index` - any spatial index implementing the gridwork protocol
-- `accessor` - function mapping items to their bounds
 - `point` - `{ x, y }` center point
 - `r` - search radius (non-negative)
 - `options.filter` - optional predicate to filter results
 
-### `knn(index, accessor, point, k, options?)`
+### `knn(index, point, k, options?)`
 
 Find the `k` nearest items to a point with distance annotations. Returns `{ item, distance }[]` sorted by distance ascending.
 
 - `index` - any spatial index implementing the gridwork protocol
-- `accessor` - function mapping items to their bounds
 - `point` - `{ x, y }` query point
 - `k` - number of nearest neighbors (positive integer)
 - `options.maxDistance` - exclude items farther than this distance
 - `options.filter` - predicate to filter candidates
 
-### `ray(index, accessor, origin, direction, options?)`
+### `ray(index, origin, direction, options?)`
 
 Cast a ray and find all items it intersects. Returns `{ item, distance }[]` sorted by distance along the ray.
 
 - `index` - any spatial index implementing the gridwork protocol
-- `accessor` - function mapping items to their bounds
 - `origin` - `{ x, y }` ray starting point
 - `direction` - `{ x, y }` direction vector (automatically normalized)
 - `options.maxDistance` - maximum ray length
 
-### `within(index, accessor, region)`
+### `within(index, region)`
 
 Find all items fully contained within a region. Unlike `search()` which returns items that intersect, `within()` requires complete containment. Returns plain items (no distance annotation).
 
 - `index` - any spatial index implementing the gridwork protocol
-- `accessor` - function mapping items to their bounds
 - `region` - bounds object, or any gridwork geometry (point, rect, circle)
 
 ## Works with Any Gridwork Index

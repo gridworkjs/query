@@ -1,20 +1,18 @@
-import { bounds, distanceToPoint, expandBy } from '@gridworkjs/core/bounds'
-import { validateIndex, validateAccessor, validateFiniteNumber } from './validate.js'
+import { bounds, distanceToPoint } from '@gridworkjs/core/bounds'
+import { validateIndex, validateFiniteNumber } from './validate.js'
 
 /**
  * Find all items within a given radius of a point.
  * Returns { item, distance }[] sorted by distance ascending.
  *
  * @param {object} index - A spatial index implementing the gridwork protocol
- * @param {function} accessor - Maps items to their bounds
  * @param {{ x: number, y: number }} point - Center point
  * @param {number} r - Search radius
  * @param {{ filter?: function }} [options]
  * @returns {{ item: any, distance: number }[]}
  */
-export function radius(index, accessor, point, r, options) {
+export function radius(index, point, r, options) {
   validateIndex(index)
-  validateAccessor(accessor)
   validateFiniteNumber(point.x, 'point.x')
   validateFiniteNumber(point.y, 'point.y')
   validateFiniteNumber(r, 'radius')
@@ -22,6 +20,7 @@ export function radius(index, accessor, point, r, options) {
   if (r < 0) throw new Error('radius must be non-negative')
   if (r === 0) return []
 
+  const accessor = index.accessor
   const searchBounds = {
     minX: point.x - r,
     minY: point.y - r,

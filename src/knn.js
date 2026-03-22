@@ -1,20 +1,18 @@
 import { bounds, distanceToPoint } from '@gridworkjs/core/bounds'
-import { validateIndex, validateAccessor, validateFiniteNumber } from './validate.js'
+import { validateIndex, validateFiniteNumber } from './validate.js'
 
 /**
  * Enhanced k-nearest-neighbor query with maxDistance and filter support.
  * Returns { item, distance }[] sorted by distance ascending.
  *
  * @param {object} index - A spatial index implementing the gridwork protocol
- * @param {function} accessor - Maps items to their bounds
  * @param {{ x: number, y: number }} point - Query point
  * @param {number} k - Number of nearest neighbors to find
  * @param {{ maxDistance?: number, filter?: function }} [options]
  * @returns {{ item: any, distance: number }[]}
  */
-export function knn(index, accessor, point, k, options) {
+export function knn(index, point, k, options) {
   validateIndex(index)
-  validateAccessor(accessor)
   validateFiniteNumber(point.x, 'point.x')
   validateFiniteNumber(point.y, 'point.y')
 
@@ -23,6 +21,7 @@ export function knn(index, accessor, point, k, options) {
   }
   if (k <= 0) return []
 
+  const accessor = index.accessor
   const maxDistance = options && options.maxDistance
   const filter = options && options.filter
 
@@ -46,7 +45,6 @@ export function knn(index, accessor, point, k, options) {
     }
   }
 
-  // if filtering caused us to not find enough, request more from the index
   if (filter && results.length < k && candidates.length > 0) {
     const allItems = index.nearest(point, index.size)
     results.length = 0

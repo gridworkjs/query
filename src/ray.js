@@ -1,20 +1,18 @@
-import { bounds, distanceToPoint } from '@gridworkjs/core/bounds'
-import { validateIndex, validateAccessor, validateFiniteNumber } from './validate.js'
+import { bounds } from '@gridworkjs/core/bounds'
+import { validateIndex, validateFiniteNumber } from './validate.js'
 
 /**
  * Cast a ray through a spatial index and find all items it intersects.
  * Returns { item, distance }[] sorted by distance along the ray.
  *
  * @param {object} index - A spatial index implementing the gridwork protocol
- * @param {function} accessor - Maps items to their bounds
  * @param {{ x: number, y: number }} origin - Ray origin point
  * @param {{ x: number, y: number }} direction - Ray direction vector (will be normalized)
  * @param {{ maxDistance?: number }} [options]
  * @returns {{ item: any, distance: number }[]}
  */
-export function ray(index, accessor, origin, direction, options) {
+export function ray(index, origin, direction, options) {
   validateIndex(index)
-  validateAccessor(accessor)
   validateFiniteNumber(origin.x, 'origin.x')
   validateFiniteNumber(origin.y, 'origin.y')
   validateFiniteNumber(direction.x, 'direction.x')
@@ -35,6 +33,7 @@ export function ray(index, accessor, origin, direction, options) {
   const indexBounds = index.bounds
   if (!indexBounds) return []
 
+  const accessor = index.accessor
   const searchBounds = raySearchBounds(origin, dx, dy, maxDist, indexBounds)
   const candidates = index.search(searchBounds)
   const results = []
@@ -72,8 +71,6 @@ function raySearchBounds(origin, dx, dy, maxDist, indexBounds) {
   }
 }
 
-// slab method for ray-AABB intersection
-// returns distance along ray to first intersection, or null
 function rayIntersectsAABB(origin, dx, dy, box) {
   let tmin = -Infinity
   let tmax = Infinity

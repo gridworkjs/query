@@ -20,7 +20,7 @@ describe('radius', () => {
       { id: 'c', geo: point(10, 10) }
     ])
 
-    const results = radius(tree, accessor, { x: 0, y: 0 }, 6)
+    const results = radius(tree, { x: 0, y: 0 }, 6)
     assert.equal(results.length, 2)
     assert.equal(results[0].item.id, 'a')
     assert.equal(results[0].distance, 0)
@@ -34,14 +34,14 @@ describe('radius', () => {
       { id: 'b', geo: point(100, 100) }
     ])
 
-    const results = radius(tree, accessor, { x: 0, y: 0 }, 10)
+    const results = radius(tree, { x: 0, y: 0 }, 10)
     assert.equal(results.length, 1)
     assert.equal(results[0].item.id, 'a')
   })
 
   it('returns empty array for radius of 0', () => {
     const tree = makeTree([{ id: 'a', geo: point(0, 0) }])
-    const results = radius(tree, accessor, { x: 0, y: 0 }, 0)
+    const results = radius(tree, { x: 0, y: 0 }, 0)
     assert.equal(results.length, 0)
   })
 
@@ -52,7 +52,7 @@ describe('radius', () => {
       { id: 'mid', geo: point(5, 0) }
     ])
 
-    const results = radius(tree, accessor, { x: 0, y: 0 }, 10)
+    const results = radius(tree, { x: 0, y: 0 }, 10)
     assert.deepEqual(results.map(r => r.item.id), ['near', 'mid', 'far'])
   })
 
@@ -62,7 +62,7 @@ describe('radius', () => {
       { id: 'b', geo: rect(20, 20, 22, 22) }
     ])
 
-    const results = radius(tree, accessor, { x: 0, y: 0 }, 5)
+    const results = radius(tree, { x: 0, y: 0 }, 5)
     assert.equal(results.length, 1)
     assert.equal(results[0].item.id, 'a')
   })
@@ -72,7 +72,7 @@ describe('radius', () => {
       { id: 'a', geo: rect(3, 0, 6, 2) }
     ])
 
-    const results = radius(tree, accessor, { x: 0, y: 0 }, 10)
+    const results = radius(tree, { x: 0, y: 0 }, 10)
     assert.equal(results.length, 1)
     assert.equal(results[0].distance, 3)
   })
@@ -82,7 +82,7 @@ describe('radius', () => {
       { id: 'a', geo: rect(-5, -5, 5, 5) }
     ])
 
-    const results = radius(tree, accessor, { x: 0, y: 0 }, 10)
+    const results = radius(tree, { x: 0, y: 0 }, 10)
     assert.equal(results[0].distance, 0)
   })
 
@@ -93,7 +93,7 @@ describe('radius', () => {
       { id: 'c', geo: point(3, 0), type: 'food' }
     ])
 
-    const results = radius(tree, accessor, { x: 0, y: 0 }, 5, {
+    const results = radius(tree, { x: 0, y: 0 }, 5, {
       filter: item => item.type === 'food'
     })
     assert.equal(results.length, 2)
@@ -102,27 +102,22 @@ describe('radius', () => {
 
   it('returns empty for empty index', () => {
     const tree = createQuadtree(accessor)
-    const results = radius(tree, accessor, { x: 0, y: 0 }, 100)
+    const results = radius(tree, { x: 0, y: 0 }, 100)
     assert.equal(results.length, 0)
   })
 
   it('throws on non-spatial-index', () => {
-    assert.throws(() => radius({}, accessor, { x: 0, y: 0 }, 5), /spatial index/)
-  })
-
-  it('throws on invalid accessor', () => {
-    const tree = makeTree([])
-    assert.throws(() => radius(tree, 'nope', { x: 0, y: 0 }, 5), /accessor/)
+    assert.throws(() => radius({}, { x: 0, y: 0 }, 5), /spatial index/)
   })
 
   it('throws on NaN point coordinates', () => {
     const tree = makeTree([])
-    assert.throws(() => radius(tree, accessor, { x: NaN, y: 0 }, 5), /finite/)
+    assert.throws(() => radius(tree, { x: NaN, y: 0 }, 5), /finite/)
   })
 
   it('throws on negative radius', () => {
     const tree = makeTree([])
-    assert.throws(() => radius(tree, accessor, { x: 0, y: 0 }, -1), /non-negative/)
+    assert.throws(() => radius(tree, { x: 0, y: 0 }, -1), /non-negative/)
   })
 
   it('handles items exactly on the radius boundary', () => {
@@ -130,7 +125,7 @@ describe('radius', () => {
       { id: 'a', geo: point(3, 4) }
     ])
 
-    const results = radius(tree, accessor, { x: 0, y: 0 }, 5)
+    const results = radius(tree, { x: 0, y: 0 }, 5)
     assert.equal(results.length, 1)
     assert.equal(results[0].distance, 5)
   })
@@ -140,7 +135,7 @@ describe('radius', () => {
       { id: 'a', geo: point(3, 4.001) }
     ])
 
-    const results = radius(tree, accessor, { x: 0, y: 0 }, 5)
+    const results = radius(tree, { x: 0, y: 0 }, 5)
     assert.equal(results.length, 0)
   })
 })
