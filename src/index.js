@@ -1,4 +1,5 @@
 export { radius } from './radius.js'
 export { knn } from './knn.js'
 export { ray } from './ray.js'
+export { segment } from './segment.js'
 export { within } from './within.js'

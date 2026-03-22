@@ -21,7 +21,7 @@ Spatial indexes give you `search()` (rectangular intersection) and `nearest()` (
 Every query function takes a spatial index as its first argument. The index carries its own accessor, so you never pass it twice.
 
 ```js
-import { radius, knn, ray, within } from '@gridworkjs/query'
+import { radius, knn, ray, segment, within } from '@gridworkjs/query'
 import { createQuadtree } from '@gridworkjs/quadtree'
 import { point, rect, bounds } from '@gridworkjs/core'
 
@@ -73,6 +73,18 @@ const hits = ray(tree, { x: 100, y: 200 }, { x: 1, y: 0.5 })
 const firstHit = hits[0]?.item
 ```
 
+### Segment - "What's between A and B?"
+
+Check what a bullet passes through on its way to the target. Line of sight, projectile paths, collision detection between two known points:
+
+```js
+const obstacles = segment(tree, { x: 100, y: 200 }, { x: 400, y: 100 })
+// => [{ item: { id: 'chest', ... }, distance: 5.59 },
+//     { item: { id: 'enemy-1', ... }, distance: 22.36 }]
+
+const blocked = obstacles.some(o => o.item.id !== 'player')
+```
+
 ### Within - "What's fully inside this area?"
 
 Find all entities completely contained in a selection rectangle. A strategy game box-selecting units:
@@ -111,6 +123,16 @@ Cast a ray and find all items it intersects. Returns `{ item, distance }[]` sort
 - `origin` - `{ x, y }` ray starting point
 - `direction` - `{ x, y }` direction vector (automatically normalized)
 - `options.maxDistance` - maximum ray length
+- `options.filter` - optional predicate to filter results
+
+### `segment(index, from, to, options?)`
+
+Find all items intersecting a line segment between two points. Returns `{ item, distance }[]` sorted by distance from the start point.
+
+- `index` - any spatial index implementing the gridwork protocol
+- `from` - `{ x, y }` segment start point
+- `to` - `{ x, y }` segment end point
+- `options.filter` - optional predicate to filter results
 
 ### `within(index, region)`
 
