@@ -93,4 +93,13 @@ describe('within', () => {
   it('throws on non-spatial-index', () => {
     assert.throws(() => within({}, rect(0, 0, 10, 10)), /spatial index/)
   })
+
+  it('circle region uses bounding box containment', () => {
+    const tree = makeTree([
+      { id: 'corner', geo: point(14, 14) },
+      { id: 'center', geo: point(5, 5) }
+    ])
+    const results = within(tree, circle(5, 5, 10))
+    assert.equal(results.length, 2)
+  })
 })

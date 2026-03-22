@@ -62,12 +62,12 @@ const primary = targets[0]?.item
 
 ### Ray - "What does this line hit?"
 
-Cast a ray from the player eastward. A bullet, a line of sight check, or a laser:
+Cast a ray from the player toward an enemy. A bullet, a line of sight check, or a laser:
 
 ```js
-const hits = ray(tree, { x: 100, y: 200 }, { x: 1, y: 0 })
-// => [{ item: { id: 'chest', ... }, distance: 5 },
-//     { item: { id: 'enemy-2', ... }, distance: 300 }]
+const hits = ray(tree, { x: 100, y: 200 }, { x: 1, y: 0.5 })
+// => [{ item: { id: 'chest', ... }, distance: 5.59 },
+//     { item: { id: 'enemy-1', ... }, distance: 22.36 }]
 
 const firstHit = hits[0]?.item
 ```
@@ -113,10 +113,10 @@ Cast a ray and find all items it intersects. Returns `{ item, distance }[]` sort
 
 ### `within(index, region)`
 
-Find all items fully contained within a region. Unlike `search()` which returns items that intersect, `within()` requires complete containment. Returns plain items (no distance annotation).
+Find all items fully contained within a region's bounding box. Unlike `search()` which returns items that intersect, `within()` requires complete containment. Returns plain items (no distance annotation).
 
 - `index` - any spatial index implementing the gridwork protocol
-- `region` - bounds object, or any gridwork geometry (point, rect, circle)
+- `region` - bounds object, or any gridwork geometry (point, rect, circle). Circles and other geometries are converted to their axis-aligned bounding box
 
 ## Works with Any Gridwork Index
 

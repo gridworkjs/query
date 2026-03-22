@@ -24,11 +24,11 @@ export function ray(index, origin, direction, options) {
   const dx = direction.x / len
   const dy = direction.y / len
 
-  const maxDist = (options && options.maxDistance !== undefined) ? options.maxDistance : Infinity
   if (options && options.maxDistance !== undefined) {
     validateFiniteNumber(options.maxDistance, 'maxDistance')
     if (options.maxDistance < 0) throw new Error('maxDistance must be non-negative')
   }
+  const maxDist = (options && options.maxDistance !== undefined) ? options.maxDistance : Infinity
 
   const indexBounds = index.bounds
   if (!indexBounds) return []
@@ -55,9 +55,11 @@ export function ray(index, origin, direction, options) {
 function raySearchBounds(origin, dx, dy, maxDist, indexBounds) {
   let endDist = maxDist
   if (!Number.isFinite(endDist)) {
-    const w = indexBounds.maxX - indexBounds.minX
-    const h = indexBounds.maxY - indexBounds.minY
-    endDist = Math.sqrt(w * w + h * h) * 2
+    const farX = dx >= 0 ? indexBounds.maxX : indexBounds.minX
+    const farY = dy >= 0 ? indexBounds.maxY : indexBounds.minY
+    const dfx = farX - origin.x
+    const dfy = farY - origin.y
+    endDist = Math.sqrt(dfx * dfx + dfy * dfy) * 1.5
   }
 
   const endX = origin.x + dx * endDist

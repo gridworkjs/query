@@ -139,4 +139,19 @@ describe('knn', () => {
     const tree = makeTree([])
     assert.throws(() => knn(tree, { x: 0, y: 0 }, 1, { maxDistance: -1 }), /non-negative/)
   })
+
+  it('throws on NaN point coordinates', () => {
+    const tree = makeTree([])
+    assert.throws(() => knn(tree, { x: NaN, y: 0 }, 1), /finite/)
+  })
+
+  it('returns results sorted by distance', () => {
+    const tree = makeTree([
+      { id: 'far', geo: point(10, 0) },
+      { id: 'near', geo: point(1, 0) },
+      { id: 'mid', geo: point(5, 0) }
+    ])
+    const results = knn(tree, { x: 0, y: 0 }, 3)
+    assert.deepEqual(results.map(r => r.item.id), ['near', 'mid', 'far'])
+  })
 })

@@ -165,4 +165,23 @@ describe('ray', () => {
     assert.equal(results.length, 1)
     assert.equal(results[0].item.id, 'a')
   })
+
+  it('throws on NaN maxDistance', () => {
+    const tree = makeTree([])
+    assert.throws(() => ray(tree, { x: 0, y: 0 }, { x: 1, y: 0 }, { maxDistance: NaN }), /finite/)
+  })
+
+  it('throws on Infinity maxDistance', () => {
+    const tree = makeTree([])
+    assert.throws(() => ray(tree, { x: 0, y: 0 }, { x: 1, y: 0 }, { maxDistance: Infinity }), /finite/)
+  })
+
+  it('finds items when origin is far from index', () => {
+    const tree = makeTree([
+      { id: 'a', geo: rect(-1, -1, 1, 1) }
+    ])
+    const results = ray(tree, { x: -10000, y: 0 }, { x: 1, y: 0 })
+    assert.equal(results.length, 1)
+    assert.equal(results[0].item.id, 'a')
+  })
 })

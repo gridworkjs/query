@@ -62,5 +62,6 @@ export function knn(index, point, k, options) {
     }
   }
 
+  results.sort((a, b) => a.distance - b.distance)
   return results
 }
